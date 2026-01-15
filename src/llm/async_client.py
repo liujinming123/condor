@@ -3,6 +3,7 @@
 """
 
 import asyncio
+import traceback
 from typing import List, Dict, Any
 from openai import AsyncOpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -10,6 +11,8 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+SOURCE_FILE = __file__
 
 
 class AsyncLLMClient:
@@ -79,7 +82,7 @@ class AsyncLLMClient:
             )
             return response.choices[0].message.content
         except Exception as e:
-            logger.error(f"LLM调用失败: {str(e)}")
+            logger.error(f"[{SOURCE_FILE}:84] LLM调用失败: {str(e)}\n{traceback.format_exc()}")
             raise
 
     async def call_llm(
@@ -138,7 +141,7 @@ class AsyncLLMClient:
                 )
                 results.append(result)
             except Exception as e:
-                logger.error(f"生成失败: {str(e)}")
+                logger.error(f"[{SOURCE_FILE}:143] 生成失败: {str(e)}\n{traceback.format_exc()}")
                 results.append("")
 
             if show_progress:

@@ -4,6 +4,7 @@
 
 import asyncio
 import random
+import traceback
 from typing import Dict, List
 import logging
 
@@ -11,6 +12,8 @@ from ..llm.async_client import AsyncLLMClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+SOURCE_FILE = __file__
 
 
 INQUIRY_PROMPTS = {
@@ -258,7 +261,7 @@ class InquiryRoundGenerator:
             return dialogue, items
 
         except Exception as e:
-            logger.error(f"生成询问轮失败: {str(e)}")
+            logger.error(f"[{SOURCE_FILE}:263] 生成询问轮失败: {str(e)}\n{traceback.format_exc()}")
             return {
                 "q": "",
                 "a": "",

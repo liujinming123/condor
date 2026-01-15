@@ -4,6 +4,7 @@
 
 import asyncio
 import random
+import traceback
 from typing import Dict, List
 import logging
 
@@ -11,6 +12,8 @@ from ..llm.async_client import AsyncLLMClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+SOURCE_FILE = __file__
 
 
 PLAYBACK_PROMPTS = {
@@ -192,19 +195,20 @@ class PlaybackRoundGenerator:
         Returns:
             条件字符串
         """
-        if not items:
+        if not items or not items[0]:
             return "推荐的内容"
 
         conditions = []
 
-        if "artist" in items[0]:
-            singers = list(set(item.get("artist", "") for item in items))
+        first_item = items[0] or {}
+        if first_item.get("artist"):
+            singers = list(set(item.get("artist", "") or "" for item in items))
             if len(singers) > 1:
                 conditions.append(f"歌手{singers[0]}和{singers[1]}合唱的")
             else:
                 conditions.append(f"{singers[0]}的")
-        elif "author" in items[0]:
-            authors = list(set(item.get("author", "") for item in items))
+        elif first_item.get("author"):
+            authors = list(set(item.get("author", "") or "" for item in items))
             if len(authors) > 1:
                 conditions.append(f"{authors[0]}代诗人{authors[1]}的作品")
             else:
@@ -285,7 +289,7 @@ class PlaybackRoundGenerator:
             return dialogue
 
         except Exception as e:
-            logger.error(f"生成播放轮失败: {str(e)}")
+            logger.error(f"[{SOURCE_FILE}:291] 生成播放轮失败: {str(e)}\n{traceback.format_exc()}")
             return {
                 "q": "",
                 "a": "",

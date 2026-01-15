@@ -5,6 +5,7 @@
 import asyncio
 import json
 import random
+import traceback
 from datetime import datetime
 from typing import Dict, List
 import logging
@@ -18,6 +19,8 @@ from .playback_round_generator import PlaybackRoundGenerator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+SOURCE_FILE = __file__
 
 
 ROUND_DISTRIBUTION = {
@@ -214,7 +217,7 @@ class MultiRoundDialogueGenerator:
             }
 
         except Exception as e:
-            logger.error(f"生成对话失败: {str(e)}")
+            logger.error(f"[{SOURCE_FILE}:219] 生成对话失败: {str(e)}\n{traceback.format_exc()}")
             return self._create_empty_dialogue(category, scenario, difficulty, intent_type)
 
     def _create_empty_dialogue(
@@ -285,7 +288,7 @@ class MultiRoundDialogueGenerator:
                     )
                     all_dialogues.append(dialogue)
                 except Exception as e:
-                    logger.error(f"生成对话失败: {str(e)}")
+                    logger.error(f"[{SOURCE_FILE}:290] 生成对话失败: {str(e)}\n{traceback.format_exc()}")
                     continue
 
             if len(all_dialogues) >= target_count:
@@ -305,7 +308,7 @@ class MultiRoundDialogueGenerator:
                 )
                 all_dialogues.append(dialogue)
             except Exception as e:
-                logger.error(f"生成对话失败: {str(e)}")
+                logger.error(f"[{SOURCE_FILE}:310] 生成对话失败: {str(e)}\n{traceback.format_exc()}")
                 continue
 
             if len(all_dialogues) >= target_count:

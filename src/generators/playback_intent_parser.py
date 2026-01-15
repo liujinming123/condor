@@ -4,6 +4,7 @@
 
 import json
 import asyncio
+import traceback
 from typing import List, Dict
 import random
 import logging
@@ -12,6 +13,8 @@ from ..llm.async_client import AsyncLLMClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+SOURCE_FILE = __file__
 
 
 INTENT_DISTRIBUTION = {
@@ -83,16 +86,20 @@ class PlaybackIntentParser:
                 max_tokens=1000
             )
 
+            if not response:
+                logger.warning(f"[{SOURCE_FILE}:89] LLM响应为空")
+                return self._fallback_extract(recommendation_answer)
+
             try:
                 result = json.loads(response)
                 items = result.get("items", [])
                 return items
             except json.JSONDecodeError:
-                logger.warning(f"解析LLM响应失败: {response[:100]}")
+                logger.warning(f"[{SOURCE_FILE}:97] 解析LLM响应失败: {response[:100]}")
                 return self._fallback_extract(recommendation_answer)
 
         except Exception as e:
-            logger.error(f"提取播放项失败: {str(e)}")
+            logger.error(f"[{SOURCE_FILE}:101] 提取播放项失败: {str(e)}\n{traceback.format_exc()}")
             return self._fallback_extract(recommendation_answer)
 
     def _fallback_extract(self, text: str) -> List[Dict]:

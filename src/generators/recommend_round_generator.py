@@ -4,6 +4,7 @@
 
 import json
 import asyncio
+import traceback
 from typing import Dict
 import logging
 
@@ -11,6 +12,8 @@ from ..llm.async_client import AsyncLLMClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+SOURCE_FILE = __file__
 
 
 RECOMMEND_PROMPT = """你是一个专业的语音助手对话数据生成专家。
@@ -148,7 +151,7 @@ class RecommendRoundGenerator:
             return dialogue
 
         except Exception as e:
-            logger.error(f"生成推荐轮失败: {str(e)}")
+            logger.error(f"[{SOURCE_FILE}:153] 生成推荐轮失败: {str(e)}\n{traceback.format_exc()}")
             return {
                 "q": "",
                 "a": "",
