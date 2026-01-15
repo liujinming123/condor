@@ -1,0 +1,132 @@
+[
+  {
+    "id": "md_000001",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Easy",
+      "total_rounds": 2,
+      "playback_intent_type": "play_all",
+      "generated_at": "2026-01-13T19:55:44.922722",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000002",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Easy",
+      "total_rounds": 2,
+      "playback_intent_type": "play_nth",
+      "generated_at": "2026-01-13T19:56:04.475603",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000003",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Medium",
+      "total_rounds": 2,
+      "playback_intent_type": "play_all",
+      "generated_at": "2026-01-13T19:56:16.060400",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000004",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Medium",
+      "total_rounds": 2,
+      "playback_intent_type": "play_nth",
+      "generated_at": "2026-01-13T19:56:26.093312",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000005",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Medium",
+      "total_rounds": 2,
+      "playback_intent_type": "play_all",
+      "generated_at": "2026-01-13T19:56:48.674363",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000006",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Easy",
+      "total_rounds": 2,
+      "playback_intent_type": "play_nth",
+      "generated_at": "2026-01-13T19:57:04.282544",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000007",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Medium",
+      "total_rounds": 2,
+      "playback_intent_type": "play_nth",
+      "generated_at": "2026-01-13T19:57:18.027815",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000008",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Easy",
+      "total_rounds": 2,
+      "playback_intent_type": "play_all",
+      "generated_at": "2026-01-13T19:57:34.349870",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000009",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Medium",
+      "total_rounds": 2,
+      "playback_intent_type": "play_all",
+      "generated_at": "2026-01-13T19:57:59.725122",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  },
+  {
+    "id": "md_000010",
+    "metadata": {
+      "category": "music",
+      "scenario": "by_artist",
+      "difficulty": "Medium",
+      "total_rounds": 2,
+      "playback_intent_type": "play_all",
+      "generated_at": "2026-01-13T19:58:08.982056",
+      "error": "generation_failed"
+    },
+    "dialogue": []
+  }
+]

@@ -1,0 +1,15 @@
+# LLM API配置
+llm_api:
+  base_url: "http://10.133.224.230:30409/v1"
+  api_key: "sk-b85c654c3f68418cbe5ca3c7d548d3d4"
+  model: "qwen-plus"
+
+# 并发控制
+concurrency:
+  max_concurrent: 5
+  request_interval: 0.5
+
+# 生成参数
+generation:
+  max_tokens: 2000
+  temperature: 0.7

@@ -1,0 +1,107 @@
+scenarios:
+  音乐推荐:
+    categories:
+      - name: "按年代推荐"
+        difficulties:
+          - Easy
+          - Medium
+        intents:
+          - play_all
+          - play_nth
+          - play_by_context
+
+      - name: "按歌手推荐"
+        difficulties:
+          - Easy
+          - Medium
+        intents:
+          - play_all
+          - play_nth
+          - play_referential
+
+      - name: "按场景推荐"
+        difficulties:
+          - Medium
+          - Hard
+        intents:
+          - play_all
+          - play_nth
+          - play_complex
+
+      - name: "按流派推荐"
+        difficulties:
+          - Easy
+          - Medium
+        intents:
+          - play_all
+          - play_nth
+          - play_by_context
+
+      - name: "综合查询"
+        difficulties:
+          - Hard
+        intents:
+          - play_by_context
+          - play_complex
+
+  视频推荐:
+    categories:
+      - name: "按类型推荐"
+        difficulties:
+          - Easy
+          - Medium
+        intents:
+          - play_all
+          - play_nth
+          - play_by_context
+
+      - name: "按场景推荐"
+        difficulties:
+          - Medium
+          - Hard
+        intents:
+          - play_all
+          - play_nth
+          - play_complex
+
+      - name: "按地区推荐"
+        difficulties:
+          - Medium
+        intents:
+          - play_all
+          - play_nth
+          - play_referential
+
+      - name: "信息查询后播放"
+        difficulties:
+          - Hard
+        intents:
+          - play_by_context
+          - play_complex
+
+  诗词播客:
+    categories:
+      - name: "按朝代推荐"
+        difficulties:
+          - Easy
+          - Medium
+        intents:
+          - play_all
+          - play_nth
+
+      - name: "按诗人推荐"
+        difficulties:
+          - Medium
+          - Hard
+        intents:
+          - play_all
+          - play_nth
+          - play_by_context
+
+      - name: "按主题推荐"
+        difficulties:
+          - Easy
+          - Medium
+        intents:
+          - play_all
+          - play_nth

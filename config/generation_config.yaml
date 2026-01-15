@@ -1,0 +1,39 @@
+generation:
+  # 目标生成数量
+  target_count: 3000
+
+  # 对话轮数分布
+  round_distribution:
+    2: 0.70
+    3: 0.20
+    4: 0.08
+    5: 0.02
+
+  # 类别分布
+  category_distribution:
+    音乐推荐: 0.40
+    视频推荐: 0.40
+    诗词播客: 0.20
+
+  # 类别到知识库映射
+  category_to_knowledge:
+    音乐推荐: "music"
+    视频推荐: "video"
+    诗词播客: "poem"
+
+  # LLM参数
+  llm:
+    max_concurrent: 5
+    request_interval: 0.5
+    max_tokens: 2000
+    temperature: 0.7
+
+  # 采样参数
+  sampling:
+    items_per_recommendation: 5
+    max_dialogues_per_combination: 10
+
+  # 输出配置
+  output:
+    format: "jsonl"
+    directory: "data/final"

@@ -1,0 +1,40 @@
+playback_intents:
+  play_all:
+    ratio: 0.20
+    description: "直接播放全部"
+    user_expressions:
+      - "播放"
+      - "放吧"
+      - "来吧"
+
+  play_nth:
+    ratio: 0.30
+    description: "播放第N个"
+    user_expressions:
+      - "放第二个"
+      - "播放第三首"
+      - "我想听第一个"
+      - "第几首"
+
+  play_by_context:
+    ratio: 0.20
+    description: "基于上下文条件播放"
+    user_expressions:
+      - "播放古装剧的"
+      - "放80年代的歌"
+      - "播放那个最火的"
+
+  play_referential:
+    ratio: 0.15
+    description: "模糊指代播放"
+    user_expressions:
+      - "放前面那个"
+      - "播放这个"
+      - "就它了"
+
+  play_complex:
+    ratio: 0.15
+    description: "多轮复杂播放"
+    user_expressions:
+      - "播放周杰伦和蔡依林合唱的歌"
+      - "放评分最高的那部"
