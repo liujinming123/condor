@@ -1,6 +1,6 @@
 generation:
   # 目标生成数量
-  target_count: 3000
+  target_count: 10
 
   # 对话轮数分布
   round_distribution:
