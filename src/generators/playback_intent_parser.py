@@ -5,7 +5,7 @@
 import json
 import asyncio
 import traceback
-from typing import List, Dict
+from typing import List, Dict, Optional
 import random
 import logging
 
@@ -50,7 +50,7 @@ class PlaybackIntentParser:
             weights=list(INTENT_DISTRIBUTION.values())
         )[0]
 
-    async def extract_items(self, recommendation_answer: str, previous_items: list = None) -> List[Dict]:
+    async def extract_items(self, recommendation_answer: str, previous_items: Optional[list] = None) -> List[Dict]:
         """
         从推荐回答中提取可播放的内容项
 
@@ -78,29 +78,45 @@ class PlaybackIntentParser:
 }}
 """
 
-        try:
-            response = await self.llm_client.call_llm(
-                sys_query="你是数据提取专家，擅长从文本中提取结构化信息。",
-                user_query=prompt,
-                temperature=0.2,
-                max_tokens=1000
-            )
-
-            if not response:
-                logger.warning(f"[{SOURCE_FILE}:89] LLM响应为空")
-                return self._fallback_extract(recommendation_answer)
-
+        max_retries = 3
+        for attempt in range(max_retries):
             try:
-                result = json.loads(response)
-                items = result.get("items", [])
-                return items
-            except json.JSONDecodeError:
-                logger.warning(f"[{SOURCE_FILE}:97] 解析LLM响应失败: {response[:100]}")
+                response = await self.llm_client.call_llm(
+                    sys_query="你是数据提取专家，擅长从文本中提取结构化信息。",
+                    user_query=prompt,
+                    temperature=0.2,
+                    max_tokens=1000
+                )
+
+                if not response:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"[{SOURCE_FILE}:95] LLM响应为空，尝试重试 ({attempt + 1}/{max_retries})")
+                        await asyncio.sleep(1)
+                        continue
+                    logger.warning(f"[{SOURCE_FILE}:98] LLM响应为空，使用备用方法")
+                    return self._fallback_extract(recommendation_answer)
+
+                try:
+                    result = json.loads(response)
+                    items = result.get("items", [])
+                    return items
+                except json.JSONDecodeError:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"[{SOURCE_FILE}:109] 解析LLM响应失败，尝试重试 ({attempt + 1}/{max_retries})")
+                        await asyncio.sleep(1)
+                        continue
+                    logger.warning(f"[{SOURCE_FILE}:112] 解析LLM响应失败: {response[:100]}")
+                    return self._fallback_extract(recommendation_answer)
+
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    logger.warning(f"[{SOURCE_FILE}:117] 提取失败，尝试重试 ({attempt + 1}/{max_retries}): {str(e)}")
+                    await asyncio.sleep(1)
+                    continue
+                logger.error(f"[{SOURCE_FILE}:120] 提取播放项失败: {str(e)}\n{traceback.format_exc()}")
                 return self._fallback_extract(recommendation_answer)
 
-        except Exception as e:
-            logger.error(f"[{SOURCE_FILE}:101] 提取播放项失败: {str(e)}\n{traceback.format_exc()}")
-            return self._fallback_extract(recommendation_answer)
+        return self._fallback_extract(recommendation_answer)
 
     def _fallback_extract(self, text: str) -> List[Dict]:
         """

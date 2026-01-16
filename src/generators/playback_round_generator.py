@@ -282,6 +282,15 @@ class PlaybackRoundGenerator:
                 temperature=0.5
             )
 
+            if not response:
+                logger.warning(f"[{SOURCE_FILE}:285] LLM响应为空")
+                return {
+                    "q": "播放",
+                    "a": "",
+                    "round_type": "playback",
+                    "playback_intent_type": intent_type
+                }
+
             dialogue = self._parse_dialogue(response)
             dialogue["round_type"] = "playback"
             dialogue["playback_intent_type"] = intent_type
@@ -289,7 +298,7 @@ class PlaybackRoundGenerator:
             return dialogue
 
         except Exception as e:
-            logger.error(f"[{SOURCE_FILE}:291] 生成播放轮失败: {str(e)}\n{traceback.format_exc()}")
+            logger.error(f"[{SOURCE_FILE}:303] 生成播放轮失败: {str(e)}\n{traceback.format_exc()}")
             return {
                 "q": "",
                 "a": "",

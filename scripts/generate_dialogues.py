@@ -104,33 +104,31 @@ async def main():
         output_dir = Path("data/final")
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        generated_count = 0
+        all_dialogues = []
         total_count = target_count
 
         batch_size = 10
-        batches = (total_count + batch_size - 1) // batch_size
 
-        for batch_num in range(1, batches + 1):
-            print(f"\n   Batch {batch_num}/{batches}")
-            start_count = generated_count
-            end_count = min(start_count + batch_size, total_count)
+        while len(all_dialogues) < total_count:
+            batch_num = (len(all_dialogues) // batch_size) + 1
+            current_batch_size = min(batch_size, total_count - len(all_dialogues))
+
+            print(f"\n   Batch {batch_num}, Progress: {len(all_dialogues)}/{total_count} ({100*len(all_dialogues)//total_count}%)")
 
             try:
-                batch_dialogues = await generator.generate_batch(end_count - start_count)
-                generated_count = len(batch_dialogues)
+                batch_dialogues = await generator.generate_batch(current_batch_size)
 
                 print(f"   Generated {len(batch_dialogues)} dialogues in this batch")
 
-                # 保存中间结果
                 if batch_dialogues:
+                    all_dialogues.extend(batch_dialogues)
+
                     batch_file = output_dir / f"batch_{batch_num}_temp.json"
                     with open(batch_file, 'w', encoding='utf-8') as f:
                         json.dump(batch_dialogues, f, ensure_ascii=False, indent=2)
                     print(f"   Saved intermediate: {batch_file}")
 
-                generated_count = len(batch_dialogues)
-
-                if generated_count >= total_count:
+                if len(all_dialogues) >= total_count:
                     print(f"\n   Reached target count: {total_count}")
                     break
 
@@ -138,15 +136,13 @@ async def main():
                 print(f"   [ERROR] Batch {batch_num} failed: {e}")
                 import traceback
                 traceback.print_exc()
-
-                # 如果出错，尝试使用已保存的数据
                 break
 
-        if generated_count == 0:
+        if len(all_dialogues) == 0:
             print("\n   [ERROR] No dialogues were generated!")
             return
 
-        # Step 6: 验证数据
+        batch_dialogues = all_dialogues
         print("\n6. Validating dialogues...")
         validator = MultiRoundValidator()
 
