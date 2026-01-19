@@ -25,13 +25,14 @@ voice_assistant_custom_condor/
 ├── config/                    # 配置文件
 ├── src/                      # 源代码
 │   ├── llm/                  # LLM客户端
-│   ├── knowledge/              # 知识库管理
-│   ├── generators/             # 对话生成器
-│   ├── validators/             # 对话验证
-│   └── utils/                 # 工具函数
-├── scripts/                   # 执行脚本
+│   ├── knowledge/            # 知识库管理
+│   ├── generators/           # 对话生成器
+│   ├── validators/           # 对话验证
+│   └── utils/                # 工具函数
+│       └── retry_helper.py   # LLM调用重试工具
+├── scripts/                  # 执行脚本
 ├── data/                     # 数据输出
-└── requirements.txt            # 依赖列表
+└── requirements.txt          # 依赖列表
 ```
 
 ## 快速开始
@@ -39,6 +40,12 @@ voice_assistant_custom_condor/
 ### 1. 创建Conda环境
 
 ```bash
+# Linux/macOS
+conda create -n ljm_condor python=3.10 -y
+conda activate ljm_condor
+pip install -r requirements.txt
+
+# Windows
 D:\Users\Jinming.Liu1\AppData\Local\anaconda3\Scripts\conda.exe create -n voice_assistant_condor python=3.10 -y
 D:\Users\Jinming.Liu1\AppData\Local\anaconda3\Scripts\activate.bat voice_assistant_condor
 pip install -r requirements.txt
@@ -114,10 +121,14 @@ A: 播放《梦华录》
 ## 技术特点
 
 1. **异步并发控制**: 支持异步LLM调用，控制并发数
-2. **错误重试**: 使用tenacity实现自动重试
+2. **错误重试**: LLM调用自动重试，最大3次，间隔1秒
 3. **知识库采样**: 从真实媒体数据中随机采样
 4. **质量保证**: 多层验证（格式验证、上下文一致性、播放意图准确性）
 5. **统计分析**: 生成详细的统计报告
+
+## 编码规范
+
+参见 [AGENTS.md](AGENTS.md) 了解详细的代码风格和开发规范。
 
 ## 许可证
 

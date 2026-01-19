@@ -104,6 +104,23 @@ except Exception as e:
 - Return sensible fallbacks
 - **NEVER suppress errors during development - expose and debug**
 
+### LLM Retry Pattern
+```python
+max_retries = 3
+for attempt in range(max_retries):
+    response = await llm_client.call_llm(...)
+    
+    if not response:
+        if attempt < max_retries - 1:
+            await asyncio.sleep(1)
+            continue
+        # Use fallback/default after max retries
+    ...
+```
+- Max retries: 3
+- Retry interval: 1 second
+- Use fallback/default after max retries
+
 ### Async/Await
 ```python
 async def call_llm() -> str:
@@ -122,6 +139,7 @@ voice_assistant_custom_condor/
 │   ├── generators/     # Dialogue generators
 │   ├── validators/     # Quality validation
 │   └── utils/          # Utilities
+│       └── retry_helper.py   # LLM retry utility
 ├── scripts/            # Execution scripts
 └── requirements.txt
 ```
@@ -138,5 +156,5 @@ voice_assistant_custom_condor/
 4. **Package Compatibility:** Update code or package version to fix compatibility
 5. **Error Handling:** During development, DO NOT use try-except to suppress errors
 
-**Version:** v1.2.0
-**Last Updated:** 2026-01-16
+**Version:** v1.2.1
+**Last Updated:** 2026-01-19
