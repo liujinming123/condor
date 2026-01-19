@@ -211,6 +211,47 @@ class InquiryRoundGenerator:
                 lines.append(f"{item['index']}. {name}")
         return "\n".join(lines)
 
+    def _extract_new_items_from_answer(self, answer: str, existing_items: List[Dict]) -> List[Dict]:
+        """
+        从回答中提取新推荐内容
+
+        Args:
+            answer: 询问轮回答文本
+            existing_items: 现有items
+
+        Returns:
+            更新后的items列表
+        """
+        new_items = []
+        lines = answer.split('\n')
+
+        for line in lines:
+            if '《' in line and '》' in line:
+                start = line.find('《') + 1
+                end = line.find('》')
+                if start < end:
+                    name = line[start:end].strip()
+
+                    author = ""
+                    if '（' in line and '）' in line:
+                        author_start = line.find('（') + 1
+                        author_end = line.find('）')
+                        if author_start < author_end:
+                            author = line[author_start:author_end]
+                            author = author.replace('歌手：', '').replace('作者：', '').strip()
+
+                    exists = any(item.get("name") == name for item in existing_items)
+
+                    if name and not exists:
+                        new_items.append({
+                            "name": name,
+                            "index": len(existing_items) + len(new_items) + 1,
+                            "artist": author
+                        })
+
+        all_items = existing_items + new_items
+        return all_items
+
     async def generate(
         self,
         previous_rounds: List[Dict],
@@ -273,7 +314,9 @@ class InquiryRoundGenerator:
                 dialogue["round_type"] = "inquiry"
                 dialogue["inquiry_type"] = inquiry_type
 
-                return dialogue, items
+                updated_items = self._extract_new_items_from_answer(dialogue.get("a", ""), items)
+
+                return dialogue, updated_items
 
             except Exception as e:
                 if attempt < max_retries - 1:

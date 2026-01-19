@@ -131,16 +131,26 @@ class PlaybackIntentParser:
         items = []
         lines = text.split('\n')
 
-        for i, line in enumerate(lines):
+        for line in lines:
             if '《' in line and '》' in line:
                 start = line.find('《') + 1
                 end = line.find('》')
                 if start < end:
                     name = line[start:end].strip()
+
+                    author = ""
+                    if '（' in line and '）' in line:
+                        author_start = line.find('（') + 1
+                        author_end = line.find('）')
+                        if author_start < author_end:
+                            author = line[author_start:author_end]
+                            author = author.replace('歌手：', '').replace('作者：', '').strip()
+
                     if name:
                         items.append({
                             "name": name,
-                            "index": len(items) + 1
+                            "index": len(items) + 1,
+                            "artist": author
                         })
 
         return items
