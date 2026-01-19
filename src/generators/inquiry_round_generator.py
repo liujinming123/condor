@@ -5,7 +5,7 @@
 import asyncio
 import random
 import traceback
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import logging
 
 from ..llm.async_client import AsyncLLMClient
@@ -219,7 +219,7 @@ class InquiryRoundGenerator:
         current_round: int,
         total_rounds: int,
         knowledge_manager
-    ) -> Dict:
+    ) -> Tuple[Dict, List[Dict]]:
         """
         生成询问轮对话
 
@@ -232,7 +232,7 @@ class InquiryRoundGenerator:
             knowledge_manager: 知识库管理器
 
         Returns:
-            对话数据
+            (对话数据, 更新后的项列表)
         """
         history_str = self._format_dialogue_history(previous_rounds)
         items_str = self._format_items(items)
@@ -258,13 +258,13 @@ class InquiryRoundGenerator:
 
                 if not response:
                     if attempt < max_retries - 1:
-                        logger.warning(f"[{SOURCE_FILE}:258] LLM响应为空，尝试重试 ({attempt + 1}/{max_retries})")
+                        logger.warning(f"[{SOURCE_FILE}:261] LLM响应为空，尝试重试 ({attempt + 1}/{max_retries})")
                         await asyncio.sleep(1)
                         continue
-                    logger.warning(f"[{SOURCE_FILE}:261] LLM响应为空，使用空对话")
+                    logger.warning(f"[{SOURCE_FILE}:264] LLM响应为空，使用默认值")
                     return {
-                        "q": "",
-                        "a": "",
+                        "q": "好的",
+                        "a": "我帮您推荐一些内容。",
                         "round_type": "inquiry",
                         "inquiry_type": inquiry_type
                     }, items
@@ -277,23 +277,16 @@ class InquiryRoundGenerator:
 
             except Exception as e:
                 if attempt < max_retries - 1:
-                    logger.warning(f"[{SOURCE_FILE}:277] 生成询问轮失败，尝试重试 ({attempt + 1}/{max_retries}): {str(e)}")
+                    logger.warning(f"[{SOURCE_FILE}:280] 生成询问轮失败，尝试重试 ({attempt + 1}/{max_retries}): {str(e)}")
                     await asyncio.sleep(1)
                     continue
-                logger.error(f"[{SOURCE_FILE}:280] 生成询问轮失败: {str(e)}\n{traceback.format_exc()}")
+                logger.error(f"[{SOURCE_FILE}:283] 生成询问轮失败: {str(e)}\n{traceback.format_exc()}")
                 return {
-                    "q": "",
-                    "a": "",
+                    "q": "好的",
+                    "a": "我帮您推荐一些内容。",
                     "round_type": "inquiry",
                     "inquiry_type": inquiry_type
                 }, items
-
-        return {
-            "q": "",
-            "a": "",
-            "round_type": "inquiry",
-            "inquiry_type": inquiry_type
-        }, items
 
     def _parse_dialogue(self, response: str) -> Dict:
         """
