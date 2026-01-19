@@ -246,28 +246,54 @@ class InquiryRoundGenerator:
 
         items = items.copy()
 
-        try:
-            response = await self.llm_client.call_llm(
-                sys_query="你是专业的语音助手，擅长生成自然的对话和推荐。",
-                user_query=prompt,
-                max_tokens=1500,
-                temperature=0.7
-            )
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = await self.llm_client.call_llm(
+                    sys_query="你是专业的语音助手，擅长生成自然的对话和推荐。",
+                    user_query=prompt,
+                    max_tokens=1500,
+                    temperature=0.7
+                )
 
-            dialogue = self._parse_dialogue(response)
-            dialogue["round_type"] = "inquiry"
-            dialogue["inquiry_type"] = inquiry_type
+                if not response:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"[{SOURCE_FILE}:258] LLM响应为空，尝试重试 ({attempt + 1}/{max_retries})")
+                        await asyncio.sleep(1)
+                        continue
+                    logger.warning(f"[{SOURCE_FILE}:261] LLM响应为空，使用空对话")
+                    return {
+                        "q": "",
+                        "a": "",
+                        "round_type": "inquiry",
+                        "inquiry_type": inquiry_type
+                    }, items
 
-            return dialogue, items
+                dialogue = self._parse_dialogue(response)
+                dialogue["round_type"] = "inquiry"
+                dialogue["inquiry_type"] = inquiry_type
 
-        except Exception as e:
-            logger.error(f"[{SOURCE_FILE}:263] 生成询问轮失败: {str(e)}\n{traceback.format_exc()}")
-            return {
-                "q": "",
-                "a": "",
-                "round_type": "inquiry",
-                "inquiry_type": inquiry_type
-            }, items
+                return dialogue, items
+
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    logger.warning(f"[{SOURCE_FILE}:277] 生成询问轮失败，尝试重试 ({attempt + 1}/{max_retries}): {str(e)}")
+                    await asyncio.sleep(1)
+                    continue
+                logger.error(f"[{SOURCE_FILE}:280] 生成询问轮失败: {str(e)}\n{traceback.format_exc()}")
+                return {
+                    "q": "",
+                    "a": "",
+                    "round_type": "inquiry",
+                    "inquiry_type": inquiry_type
+                }, items
+
+        return {
+            "q": "",
+            "a": "",
+            "round_type": "inquiry",
+            "inquiry_type": inquiry_type
+        }, items
 
     def _parse_dialogue(self, response: str) -> Dict:
         """
